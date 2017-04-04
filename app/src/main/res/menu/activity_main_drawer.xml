@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/nav_input" android:icon="@android:drawable/ic_menu_camera"
+            android:title="Input" />
+        <item android:id="@+id/nav_profiles" android:icon="@android:drawable/ic_menu_slideshow"
+            android:title="Profiles" />
+        <item android:id="@+id/nav_algorithms" android:icon="@android:drawable/ic_menu_manage"
+            android:title="Algorithms" />
+        <item android:id="@+id/nav_result" android:icon="@android:drawable/ic_menu_manage"
+            android:title="Results" />
+        <item android:id="@+id/nav_gallery" android:icon="@android:drawable/ic_menu_gallery"
+            android:title="Maps" />
+    </group>
+
+</menu>
