@@ -71,7 +71,7 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
     public static ArrayList<String> al = new ArrayList<String>();
     public HashMap<String, ArrayList<String>> hMapOUTPUT = new HashMap<String, ArrayList<String>>();
 
-
+    String[][] resultArr = MainActivity.getResultArray();
 
     Socket client;
     OutputStream outToServer;
@@ -103,6 +103,17 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
         selectAll = (Button) view.findViewById(R.id.bSelectAll);
         resetAll = (Button) view.findViewById(R.id.bResetAll);
 
+        pdComposite.setChecked(rd.is_al_PDcomposite());
+        pdDistPref.setChecked(rd.is_al_PDdistpref());
+        pagerank.setChecked(rd.is_al_pagerank());
+        pdPopDist.setChecked(rd.is_al_PDpopdist());
+        pdPref.setChecked(rd.is_al_PDpref());
+        pdCompositePagerank.setChecked(rd.is_al_PDcompositepagerank());
+        pdDistPrefPageRank.setChecked(rd.is_al_PDprefdistpagerank());
+        kMedoids.setChecked(rd.is_al_KMedoids());
+        disC.setChecked(rd.is_al_DisC());
+        randomSelection.setChecked(rd.is_al_RandomSelection());
+
 
         pdComposite.setOnClickListener(this);
         pdDistPref.setOnClickListener(this);
@@ -116,7 +127,6 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
         randomSelection.setOnClickListener(this);
 
         Toast.makeText(getActivity(), "Inside Algorithms!", Toast.LENGTH_SHORT).show();
-
 
         runAlgos.setOnClickListener(this);
         selectAll.setOnClickListener(this);
@@ -133,7 +143,9 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
             client = new Socket(serverName, port);
             outToServer = client.getOutputStream();
             out = new DataOutputStream(outToServer);
-        } catch (IOException e) {e.printStackTrace();}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return view;
     }
@@ -147,60 +159,67 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
                 ret.put("Models", modelId);
                 Toast.makeText(getActivity(), "Running your input, fetching results!", Toast.LENGTH_SHORT).show();
                 Log.d("DEBUGGING algoRun ", "came in run!");
-                    try {
-                        String details = ret.toString();
-                        Log.d("DEBUGGING details  ", details);
-                        //String serverName = "71.199.97.2";
-                        //int port = 8888;
-                        //client = new Socket(serverName, port);
-                        //outToServer = client.getOutputStream();
-                        //out = new DataOutputStream(outToServer);
-                        //System.out.println("ret.toString() "  + ret.toString());
-                        out.writeUTF(details);
-                        inFromServer = client.getInputStream();
-                        in = new DataInputStream(inFromServer);
-                        String received = in.readUTF();
-                        JSONParser parser = new JSONParser();
-                        JSONObject json = (JSONObject) parser.parse(received);
-                        JSONArray jArr = (JSONArray) json.get("Results");
-                        Toast.makeText(getActivity(), "Received : " + jArr.toString(), Toast.LENGTH_SHORT).show();
-                        StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < jArr.size(); i++) {
-                            JSONObject jsonobject = (JSONObject) jArr.get(i);
-                            String modelName = jsonobject.get("Model") + "";
-                            sb.append("Model: " + modelName + "\n");
-                            JSONArray resArr = (JSONArray) jsonobject.get("results");
-                            if (resArr != null) {
-                                for (int j = 0; j < resArr.size(); j++) {
-                                    jsonobject = (JSONObject) resArr.get(j);
-                                    String venueLocation = jsonobject.get("VenueLocation") + "";
-                                    String venueName = jsonobject.get("VenueName") + "";
-                                    String toPut = venueName + ";" + venueLocation + ";" + modelName;
-                                    Log.d("DEBUGGING toPut ", toPut + " for " + modelName);
+                try {
+                    String details = ret.toString();
+                    Log.d("DEBUGGING details  ", details);
+                    //String serverName = "71.199.97.2";
+                    //int port = 8888;
+                    //client = new Socket(serverName, port);
+                    //outToServer = client.getOutputStream();
+                    //out = new DataOutputStream(outToServer);
+                    //System.out.println("ret.toString() "  + ret.toString());
+                    out.writeUTF(details);
+                    inFromServer = client.getInputStream();
+                    in = new DataInputStream(inFromServer);
+                    String received = in.readUTF();
+                    JSONParser parser = new JSONParser();
+                    JSONObject json = (JSONObject) parser.parse(received);
+                    JSONArray jArr = (JSONArray) json.get("Results");
+                    Log.d("JSON ARR STRING : ", "Received : " + jArr.toString());
+                    Toast.makeText(getActivity(), "Received : " + jArr.toString(), Toast.LENGTH_SHORT).show();
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < jArr.size(); i++) {
+                        JSONObject jsonobject = (JSONObject) jArr.get(i);
+                        String radius = jsonobject.get("radiusOfGyration") + "";
+                        String runTime = jsonobject.get("runtime") + "";
+                        String relevency = jsonobject.get("Relevnecy") + "";
+                        String diversity = jsonobject.get("Diversity") + "";
+                        String modelName = jsonobject.get("Model") + "";
+                        setResultsArray(modelName, diversity, relevency, radius, runTime);
+                        sb.append("Model: " + modelName + "\n");
+                        Log.d("Misc Details of " + modelName, "RunTime: " + runTime + " Radius: " + radius + " Relevency: " + relevency + " Diversity: " + diversity);
+                        JSONArray resArr = (JSONArray) jsonobject.get("results");
+                        if (resArr != null) {
+                            for (int j = 0; j < resArr.size(); j++) {
+                                jsonobject = (JSONObject) resArr.get(j);
+                                String venueLocation = jsonobject.get("VenueLocation") + "";
+                                String venueName = jsonobject.get("VenueName") + "";
+                                String toPut = venueName + ";" + venueLocation + ";" + modelName;
+                                Log.d("DEBUGGING toPut ", toPut + " for " + modelName);
 
-                                    al.add(toPut);
-                                }
+                                al.add(toPut);
                             }
-                            Log.d("DEBUGGING Model", "DONE FOR " + modelName);
-                            hMapOUTPUT.put(modelName, new ArrayList<String>(al));
-                            al.clear();
                         }
-                        od = new OutputDetails(hMapOUTPUT);
-                        getActivity().getFragmentManager().beginTransaction().remove(this).commit();
-                        sMapFragment.getMapAsync(this);
-                        android.support.v4.app.FragmentManager SFM = MainActivity.getSFM();
-                        if (!sMapFragment.isAdded()) {
-                            SFM.beginTransaction().add(R.id.map, sMapFragment).commit();
-                        } else {
-                            SFM.beginTransaction().show(sMapFragment).commit();
-                            putTheMarkers(MainActivity.mGoogleMap, hMapOUTPUT);
-                        }
-                        client.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (ParseException p) {
-                        p.printStackTrace();
+                        Log.d("DEBUGGING Model", "DONE FOR " + modelName);
+                        hMapOUTPUT.put(modelName, new ArrayList<String>(al));
+                        al.clear();
                     }
+                    od = new OutputDetails(hMapOUTPUT);
+                    getActivity().getFragmentManager().beginTransaction().remove(this).commit();
+                    sMapFragment.getMapAsync(this);
+                    android.support.v4.app.FragmentManager SFM = MainActivity.getSFM();
+                    if (!sMapFragment.isAdded()) {
+                        SFM.beginTransaction().add(R.id.map, sMapFragment).commit();
+                    } else {
+                        SFM.beginTransaction().show(sMapFragment).commit();
+                        putTheMarkers(MainActivity.mGoogleMap, hMapOUTPUT);
+                    }
+                    client.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ParseException p) {
+                    p.printStackTrace();
+                }
 
 
                 break;
@@ -297,7 +316,7 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
                 }
                 break;
             case R.id.bSelectAll:
-                for (int i = 1; i <= 10; i++)
+                for (int i = 0; i <= 9; i++)
                     models_arr[i] = 1;
                 rd.set_al_PDcomposite(true);
                 rd.set_al_PDdistpref(true);
@@ -321,7 +340,7 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
                 randomSelection.setChecked(true);
                 break;
             case R.id.bResetAll:
-                for (int i = 1; i <= 10; i++)
+                for (int i = 0; i <= 9; i++)
                     models_arr[i] = 0;
                 rd.set_al_PDcomposite(false);
                 rd.set_al_PDdistpref(false);
@@ -348,15 +367,80 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
         }
     }
 
+    private void setResultsArray(String modelName, String diversity, String relevency, String radius, String runTime) {
+        switch (modelName) {
+            case "PageRank":
+                resultArr[2][1] = diversity;
+                resultArr[2][2] = relevency;
+                resultArr[2][3] = radius;
+                resultArr[2][4] = runTime;
+                break;
+            case "PD(dist+pref)":
+                resultArr[1][1] = diversity;
+                resultArr[1][2] = relevency;
+                resultArr[1][3] = radius;
+                resultArr[1][4] = runTime;
+                break;
+            case "PD(pop+dist)":
+                resultArr[3][1] = diversity;
+                resultArr[3][2] = relevency;
+                resultArr[3][3] = radius;
+                resultArr[3][4] = runTime;
+                break;
+            case "PD(pref)":
+                resultArr[4][1] = diversity;
+                resultArr[4][2] = relevency;
+                resultArr[4][3] = radius;
+                resultArr[4][4] = runTime;
+                break;
+            case "PD(composite+PageRank)":
+                resultArr[5][1] = diversity;
+                resultArr[5][2] = relevency;
+                resultArr[5][3] = radius;
+                resultArr[5][4] = runTime;
+                break;
+            case "PD(pref+dist+pr)":
+                resultArr[6][1] = diversity;
+                resultArr[6][2] = relevency;
+                resultArr[6][3] = radius;
+                resultArr[6][4] = runTime;
+                break;
+            case "K-medoids":
+                resultArr[7][1] = diversity;
+                resultArr[7][2] = relevency;
+                resultArr[7][3] = radius;
+                resultArr[7][4] = runTime;
+                break;
+            case "DisC":
+                resultArr[8][1] = diversity;
+                resultArr[8][2] = relevency;
+                resultArr[8][3] = radius;
+                resultArr[8][4] = runTime;
+                break;
+            case "Random":
+                resultArr[9][1] = diversity;
+                resultArr[9][2] = relevency;
+                resultArr[9][3] = radius;
+                resultArr[9][4] = runTime;
+                break;
+            default:
+                resultArr[0][1] = diversity;
+                resultArr[0][2] = relevency;
+                resultArr[0][3] = radius;
+                resultArr[0][4] = runTime;
+                break;
+
+        }
+    }
+
     private void putTheMarkers(GoogleMap mGoogleMap, HashMap<String, ArrayList<String>> hMapOUTPUT) {
-        for(String key: hMapOUTPUT.keySet()) {
-            Log.d("HASHMAP in putMarkers", key  +" :: "+ hMapOUTPUT.get(key));
+        for (String key : hMapOUTPUT.keySet()) {
+            Log.d("HASHMAP in putMarkers", key + " :: " + hMapOUTPUT.get(key));
         }
 
         if (rd.get_city() == "San Fransisco") {
             mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.7749, -122.4194), 12.0f));
-        }
-        else{
+        } else {
             mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.770039, -73.826566), 12.0f));
         }
 

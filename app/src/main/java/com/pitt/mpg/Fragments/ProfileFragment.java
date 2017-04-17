@@ -47,6 +47,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         selectAll =  (Button) view.findViewById(R.id.bSelectAll);
         resetAll =  (Button) view.findViewById(R.id.bResetAll);
 
+
+        foodLover.setChecked(rd.is_pr_foodLOVER());
+        nightLifeLover.setChecked(rd.is_pr_nightLOVER());
+        outdoorsLover.setChecked(rd.is_pr_outdoorsLOVER());
+        artLover.setChecked(rd.is_pr_artLOVER());
+        shoppingLover.setChecked(rd.is_pr_shoppingLOVER());
+
         saveProfile.setOnClickListener(this);
         selectAll.setOnClickListener(this);
         resetAll.setOnClickListener(this);

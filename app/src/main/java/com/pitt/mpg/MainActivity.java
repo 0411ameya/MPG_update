@@ -25,11 +25,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.pitt.mpg.Fragments.AlgorithmFragments;
+import com.pitt.mpg.Fragments.CompareFragment;
+import com.pitt.mpg.Fragments.CreditsFragment;
 import com.pitt.mpg.Fragments.ImportFragment;
 import com.pitt.mpg.Fragments.ProfileFragment;
 import com.pitt.mpg.Fragments.ResultsFragment;
 
 import org.json.simple.JSONObject;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
@@ -39,6 +43,9 @@ public class MainActivity extends AppCompatActivity
     public static RequestDetails rd;
     public static android.support.v4.app.FragmentManager SFM;
     public static LatLng ll = new LatLng(37.7749, -122.4194); //37.7749, -122.4194
+    public static String[][] resultArr = new String[10][5];
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,18 +53,18 @@ public class MainActivity extends AppCompatActivity
         rd = new RequestDetails();
         sMapFragment = SupportMapFragment.newInstance();
         SFM = getSupportFragmentManager();
+
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 5; j++) {
+                resultArr[i][j] = "-";
+            }
+        }
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -160,6 +167,16 @@ public class MainActivity extends AppCompatActivity
             fl.removeAllViews();
             fm.beginTransaction().replace(R.id.content_frame, new ResultsFragment()).commit();
 
+        } else if (id == R.id.nav_compare) {
+            FrameLayout fl = (FrameLayout)findViewById(R.id.content_frame);
+            fl.removeAllViews();
+            fm.beginTransaction().replace(R.id.content_frame, new CompareFragment()).commit();
+
+        } else if (id == R.id.nav_credits) {
+            FrameLayout fl = (FrameLayout)findViewById(R.id.content_frame);
+            fl.removeAllViews();
+            fm.beginTransaction().replace(R.id.content_frame, new CreditsFragment()).commit();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -233,6 +250,10 @@ public class MainActivity extends AppCompatActivity
 
     public static LatLng getMarkerPosition(){
         return ll;
+    }
+
+    public static String[][] getResultArray(){
+        return resultArr;
     }
 
 }

@@ -90,6 +90,22 @@ public class ImportFragment extends Fragment implements View.OnClickListener{
         shopANDservice = (ToggleButton) view.findViewById(R.id.tbShopService);
         travelANDtransport = (ToggleButton) view.findViewById(R.id.tbTravelTransport);
 
+        if (rd.get_radius()!=null){
+            radius.setText(rd.get_radius());
+            venues.setText(rd.get_venues());
+        }
+
+        artANDentertainment.setChecked(rd.is_ip_artANDentertainment());
+        clgANDuniversity.setChecked(rd.is_ip_collegeANDuniversity());
+        event.setChecked(rd.is_ip_event());
+        food.setChecked(rd.is_ip_food());
+        nightLife.setChecked(rd.is_ip_nightlifespot());
+        outdoors.setChecked(rd.is_ip_outdoorsANDrecreation());
+        professionalANDothers.setChecked(rd.is_ip_professionalANDothers());
+        residence.setChecked(rd.is_ip_residence());
+        shopANDservice.setChecked(rd.is_ip_shopANDservice());
+        travelANDtransport.setChecked(rd.is_ip_travelANDtransport());
+
         selectAll = (Button) view.findViewById(R.id.bSelectAll);
         resetAll = (Button) view.findViewById(R.id.bResetAll);
 

@@ -65,8 +65,8 @@ public class ResultsFragment extends Fragment implements View.OnClickListener, O
         od = AlgorithmFragments.getOD();
         hMap_OD = od.getOut();
 
-        for(String key: hMap_OD.keySet()) {
-            Log.d("HASHMAP in RESULTSFRAG", key  +" :: "+ hMap_OD.get(key));
+        for (String key : hMap_OD.keySet()) {
+            Log.d("HASHMAP in RESULTSFRAG", key + " :: " + hMap_OD.get(key));
         }
 
         sMapFragment = MainActivity.getsMapFragment();
@@ -81,7 +81,7 @@ public class ResultsFragment extends Fragment implements View.OnClickListener, O
         disC = (ToggleButton) view.findViewById(R.id.tbDisC1);
         randomSelection = (ToggleButton) view.findViewById(R.id.tbRandomSelection1);
 
-        mG.clear();
+
 
         initializeVISIBILITY();
         sMapFragment.getMapAsync(this);
@@ -243,8 +243,7 @@ public class ResultsFragment extends Fragment implements View.OnClickListener, O
                 Log.d("OnClickTest", "I came in");
                 if (pdComposite.isChecked()) {
                     Log.d("OnClickTest2", "I came in checked");
-                    for (int i = 0; i < pdComposite_AL.size(); i++)
-                    {
+                    for (int i = 0; i < pdComposite_AL.size(); i++) {
                         pdComposite_AL.get(i).setVisible(true);
                         pdComposite_AL.get(i).setSnippet("PD(composite)");
                     }
@@ -258,8 +257,7 @@ public class ResultsFragment extends Fragment implements View.OnClickListener, O
                 break;
             case R.id.tbPDDistPref1:
                 if (pdDistPref.isChecked()) {
-                    for (int i = 0; i < pdDistPref_AL.size(); i++)
-                    {
+                    for (int i = 0; i < pdDistPref_AL.size(); i++) {
                         pdDistPref_AL.get(i).setVisible(true);
                         pdDistPref_AL.get(i).setSnippet("PD(Dist+Pref)");
                     }
@@ -271,8 +269,7 @@ public class ResultsFragment extends Fragment implements View.OnClickListener, O
                 break;
             case R.id.tbPageRank1:
                 if (pagerank.isChecked()) {
-                    for (int i = 0; i < pagerank_AL.size(); i++)
-                    {
+                    for (int i = 0; i < pagerank_AL.size(); i++) {
                         pagerank_AL.get(i).setVisible(true);
                         pagerank_AL.get(i).setSnippet("PageRank");
                     }
@@ -284,8 +281,7 @@ public class ResultsFragment extends Fragment implements View.OnClickListener, O
                 break;
             case R.id.tbPopDist1:
                 if (pdPopDist.isChecked()) {
-                    for (int i = 0; i < pdPopDist_AL.size(); i++)
-                    {
+                    for (int i = 0; i < pdPopDist_AL.size(); i++) {
                         pdPopDist_AL.get(i).setVisible(true);
                         pdPopDist_AL.get(i).setSnippet("PD(Pop+Dist)");
                     }
@@ -297,8 +293,7 @@ public class ResultsFragment extends Fragment implements View.OnClickListener, O
                 break;
             case R.id.tbPref1:
                 if (pdPref.isChecked()) {
-                    for (int i = 0; i < pdPref_AL.size(); i++)
-                    {
+                    for (int i = 0; i < pdPref_AL.size(); i++) {
                         pdPref_AL.get(i).setVisible(true);
                         pdPref_AL.get(i).setSnippet("PD(Pref)");
                     }
@@ -310,8 +305,7 @@ public class ResultsFragment extends Fragment implements View.OnClickListener, O
                 break;
             case R.id.tbPDCompositePageRank1:
                 if (pdCompositePagerank.isChecked()) {
-                    for (int i = 0; i < pdCompositePagerank_AL.size(); i++)
-                    {
+                    for (int i = 0; i < pdCompositePagerank_AL.size(); i++) {
                         pdCompositePagerank_AL.get(i).setVisible(true);
                         pdCompositePagerank_AL.get(i).setSnippet("PD(Composite+PageRank)");
                     }
@@ -323,8 +317,7 @@ public class ResultsFragment extends Fragment implements View.OnClickListener, O
                 break;
             case R.id.tbPDDistPrefPageRank1:
                 if (pdDistPrefPageRank.isChecked()) {
-                    for (int i = 0; i < pdDistPrefPageRank_AL.size(); i++)
-                    {
+                    for (int i = 0; i < pdDistPrefPageRank_AL.size(); i++) {
                         pdDistPrefPageRank_AL.get(i).setVisible(true);
                         pdDistPrefPageRank_AL.get(i).setSnippet("PD(Dist+Pref+PageRank)");
                     }
@@ -336,8 +329,7 @@ public class ResultsFragment extends Fragment implements View.OnClickListener, O
                 break;
             case R.id.tbK_Medoids1:
                 if (kMedoids.isChecked()) {
-                    for (int i = 0; i < kMedoids_AL.size(); i++)
-                    {
+                    for (int i = 0; i < kMedoids_AL.size(); i++) {
                         kMedoids_AL.get(i).setVisible(true);
                         kMedoids_AL.get(i).setSnippet("K-Medoids");
                     }
@@ -349,8 +341,7 @@ public class ResultsFragment extends Fragment implements View.OnClickListener, O
                 break;
             case R.id.tbDisC1:
                 if (disC.isChecked()) {
-                    for (int i = 0; i < disC_AL.size(); i++)
-                    {
+                    for (int i = 0; i < disC_AL.size(); i++) {
                         disC_AL.get(i).setVisible(true);
                         disC_AL.get(i).setSnippet("DisC");
                     }
@@ -362,8 +353,7 @@ public class ResultsFragment extends Fragment implements View.OnClickListener, O
                 break;
             case R.id.tbRandomSelection1:
                 if (randomSelection.isChecked()) {
-                    for (int i = 0; i < randomSelection_AL.size(); i++)
-                    {
+                    for (int i = 0; i < randomSelection_AL.size(); i++) {
                         randomSelection_AL.get(i).setVisible(true);
                         randomSelection_AL.get(i).setSnippet("Random Selection");
                     }
