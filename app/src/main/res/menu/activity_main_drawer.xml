@@ -8,10 +8,15 @@
             android:title="Profiles" />
         <item android:id="@+id/nav_algorithms" android:icon="@android:drawable/ic_menu_manage"
             android:title="Algorithms" />
-        <item android:id="@+id/nav_result" android:icon="@android:drawable/ic_menu_manage"
+        <item android:id="@+id/nav_compare" android:icon="@android:drawable/ic_menu_manage"
             android:title="Results" />
+        <item android:id="@+id/nav_result" android:icon="@android:drawable/ic_menu_manage"
+            android:title="Hide / Show PoI" />
         <item android:id="@+id/nav_gallery" android:icon="@android:drawable/ic_menu_gallery"
             android:title="Maps" />
+        <item android:id="@+id/nav_credits" android:icon="@android:drawable/ic_menu_gallery"
+            android:title="Credits" />
+
     </group>
 
 </menu>
