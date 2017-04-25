@@ -16,6 +16,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -39,6 +41,15 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/*
+* Here the Request Details object is partly set with the items that exist in this algorithm fragment
+* For implementing the database functionality, I check if the object's data is already set, if not set, it will not use any text, but if set, it will use the previous value
+* As soon as this fragment is clicked, a server connection is established prior to user selecting any algorithms, this is done in background to improve performance
+* The app cannot progress further if the server is down (crashes)
+* The query is build using different arrays and then a json string is sent and received back from the server when RUN button is clicked
+* On clicking the Run button, all the object parameters for Import Fragment are set. Before clicking the button nothing is saved
+* Immediately after successful reply from the server, the map fragment is automatically loaded with the results
+*/
 
 public class AlgorithmFragments extends Fragment implements View.OnClickListener, OnMapReadyCallback {
     View view;
@@ -62,15 +73,18 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
     String modelId = "";
     char models_arr[] = new char[12];
 
-    public static OutputDetails od;
+
+    float[] b = new float[11];
+
 
     String serverName = "71.199.97.2";
     int port = 8888;
 
     SupportMapFragment sMapFragment;
     public static ArrayList<String> al = new ArrayList<String>();
-    public HashMap<String, ArrayList<String>> hMapOUTPUT = new HashMap<String, ArrayList<String>>();
-
+    public static HashMap<String, ArrayList<String>> hMapOUTPUT = MainActivity.hMapOUTPUT;
+    public static OutputDetails od = new OutputDetails(hMapOUTPUT);
+    public HashMap<String, Integer> colorHMap = new HashMap<String, Integer>();
     String[][] resultArr = MainActivity.getResultArray();
 
     Socket client;
@@ -79,12 +93,16 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
     InputStream inFromServer;
     DataInputStream in;
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_algorithms, container, false);
         rd = MainActivity.getRDObject();
         ret = MainActivity.getJSONObject();
+
+        initializeColorMaps();
+
 
         sMapFragment = MainActivity.getsMapFragment();
 
@@ -150,11 +168,44 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
         return view;
     }
 
+
+    /**
+     * This method sets the hash map so that whenever a algorithms results needs to be plotted, the appropriate color is picked
+     */
+    private void initializeColorMaps() {
+        colorHMap.put("PD(composite)", 0);
+        colorHMap.put("PD(dist+pref)", 1);
+        colorHMap.put("PageRank", 2);
+        colorHMap.put("PD(pop+dist)", 3);
+        colorHMap.put("PD(pref)", 4);
+        colorHMap.put("PD(composite+PageRank)", 5);
+        colorHMap.put("PD(pref+dist+pr)", 6);
+        colorHMap.put("K-medoids", 7);
+        colorHMap.put("DisC", 8);
+        colorHMap.put("Random", 9);
+
+        b[0] = BitmapDescriptorFactory.HUE_RED;
+        b[1] = BitmapDescriptorFactory.HUE_AZURE;
+        b[2] = BitmapDescriptorFactory.HUE_GREEN;
+        b[3] = BitmapDescriptorFactory.HUE_ORANGE;
+        b[4] = BitmapDescriptorFactory.HUE_RED;
+        b[5] = BitmapDescriptorFactory.HUE_YELLOW;
+        b[6] = BitmapDescriptorFactory.HUE_MAGENTA;
+        b[7] = BitmapDescriptorFactory.HUE_ROSE;
+        b[8] = BitmapDescriptorFactory.HUE_CYAN;
+        b[9] = BitmapDescriptorFactory.HUE_BLUE;
+    }
+
     @Override
     public void onClick(View view) {
         int id = view.getId();
         switch (id) {
             case R.id.bRunAlgo:
+                /**
+                 * An array list for selected algorithm is create which is used as value for the model name as key
+                 * Array list of one algorithm holds all the markers returned for that particular algorithm
+                 * Once the hash map is filled, the hash map is then sent to the putTheMarkers method
+                 */
                 modelId = getMID(models_arr);
                 ret.put("Models", modelId);
                 Toast.makeText(getActivity(), "Running your input, fetching results!", Toast.LENGTH_SHORT).show();
@@ -185,6 +236,7 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
                         String relevency = jsonobject.get("Relevnecy") + "";
                         String diversity = jsonobject.get("Diversity") + "";
                         String modelName = jsonobject.get("Model") + "";
+                        int color = colorHMap.get(modelName);
                         setResultsArray(modelName, diversity, relevency, radius, runTime);
                         sb.append("Model: " + modelName + "\n");
                         Log.d("Misc Details of " + modelName, "RunTime: " + runTime + " Radius: " + radius + " Relevency: " + relevency + " Diversity: " + diversity);
@@ -194,7 +246,7 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
                                 jsonobject = (JSONObject) resArr.get(j);
                                 String venueLocation = jsonobject.get("VenueLocation") + "";
                                 String venueName = jsonobject.get("VenueName") + "";
-                                String toPut = venueName + ";" + venueLocation + ";" + modelName;
+                                String toPut = venueName + ";" + venueLocation + ";" + modelName + ";" + color;
                                 Log.d("DEBUGGING toPut ", toPut + " for " + modelName);
 
                                 al.add(toPut);
@@ -204,7 +256,7 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
                         hMapOUTPUT.put(modelName, new ArrayList<String>(al));
                         al.clear();
                     }
-                    od = new OutputDetails(hMapOUTPUT);
+                    od.setOut(hMapOUTPUT);
                     getActivity().getFragmentManager().beginTransaction().remove(this).commit();
                     sMapFragment.getMapAsync(this);
                     android.support.v4.app.FragmentManager SFM = MainActivity.getSFM();
@@ -367,6 +419,15 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
         }
     }
 
+    /**
+     * These are the results retreived from the server and properly filled in the respective positions in result array which is then
+     * used in the Compare Fragment in a table layout to display the results
+     * @param modelName
+     * @param diversity
+     * @param relevency
+     * @param radius
+     * @param runTime
+     */
     private void setResultsArray(String modelName, String diversity, String relevency, String radius, String runTime) {
         switch (modelName) {
             case "PageRank":
@@ -433,6 +494,11 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
         }
     }
 
+    /**
+     * The two arguments taken are
+     * @param mGoogleMap this is the main activity singleton object of Google map
+     * @param hMapOUTPUT this is the hash map that is set when server replies and the results are parsed and rendered
+     */
     private void putTheMarkers(GoogleMap mGoogleMap, HashMap<String, ArrayList<String>> hMapOUTPUT) {
         for (String key : hMapOUTPUT.keySet()) {
             Log.d("HASHMAP in putMarkers", key + " :: " + hMapOUTPUT.get(key));
@@ -450,17 +516,24 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
             ArrayList<String> ven = hMapOUTPUT.get(key);
             for (int i = 0; i < ven.size(); i++) {
                 String[] arr = ven.get(i).split(";");
-                mGoogleMap.addMarker(new MarkerOptions()
+                Marker m = mGoogleMap.addMarker(new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(arr[1]), Double.parseDouble(arr[2])))
-                        .title(arr[0]))
-                        .setSnippet(arr[3]);
-                //title;Lat;Lng;
+                        .title(arr[0])
+                        .icon(BitmapDescriptorFactory.defaultMarker(b[Integer.parseInt(arr[4])])));
+                m.setSnippet(arr[3]);
+
+                //title;Lat;Lng;color
             }
         }
 
 
     }
 
+    /**
+     *
+     * @param models_arr takes model array that get sets at particular index every time the respective click event occurs
+     * @return a string which is sent to server to indicate which algorithms are selected
+     */
     private String getMID(char[] models_arr) {
         String list = "";
 
@@ -475,11 +548,16 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
         return list;
     }
 
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
     }
 
+    /**
+     *
+     * @return Output Details object to check if it is null when this fragment is opened. We cannot allow this object to crash the app if it is null
+     */
     public static OutputDetails getOD() {
         return od;
     }
