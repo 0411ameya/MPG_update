@@ -14,10 +14,15 @@ import com.pitt.mpg.MainActivity;
 import com.pitt.mpg.R;
 import com.pitt.mpg.RequestDetails;
 
-import org.json.JSONException;
 import org.json.simple.JSONObject;
 
-public class ProfileFragment extends Fragment implements View.OnClickListener{
+/*
+* Here the Request Details object is partly set with the items that exist in this profile fragment method
+* For implementing the database functionality, I check if the object's data is already set, if not set, it will not use any text, but if set, it will use the previous value
+* On clicking the Save Profile button, all the profile parameter for Profile Fragment is set. Before clicking the save profile button nothing is saved
+*/
+
+public class ProfileFragment extends Fragment implements View.OnClickListener {
     JSONObject ret;
     View view;
     RequestDetails rd;
@@ -33,7 +38,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view =  inflater.inflate(R.layout.fragment_profile,container,false);
+        view = inflater.inflate(R.layout.fragment_profile, container, false);
         ret = MainActivity.getJSONObject();
         rd = MainActivity.getRDObject();
 
@@ -44,9 +49,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         shoppingLover = (ToggleButton) view.findViewById(R.id.tbShoppingLover);
 
         saveProfile = (Button) view.findViewById(R.id.bSaveProfile);
-        selectAll =  (Button) view.findViewById(R.id.bSelectAll);
-        resetAll =  (Button) view.findViewById(R.id.bResetAll);
-
+        selectAll = (Button) view.findViewById(R.id.bSelectAll);
+        resetAll = (Button) view.findViewById(R.id.bResetAll);
 
         foodLover.setChecked(rd.is_pr_foodLOVER());
         nightLifeLover.setChecked(rd.is_pr_nightLOVER());
@@ -63,7 +67,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         outdoorsLover.setOnClickListener(this);
         artLover.setOnClickListener(this);
         shoppingLover.setOnClickListener(this);
-        
+
         return view;
     }
 
@@ -75,57 +79,42 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 Toast.makeText(getActivity(), " Your profiles have been saved!", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.tbArtLover:
-                if (artLover.isChecked())
-                {
+                if (artLover.isChecked()) {
                     rd.set_pr_artLOVER(true);
-                    ret.put("profile","ArtLover");
-                }
-                else
-                {
+                    ret.put("profile", "ArtLover");
+                } else {
                     rd.set_pr_artLOVER(false);
                 }
                 break;
             case R.id.tbFoodLover:
-                if (foodLover.isChecked())
-                {
+                if (foodLover.isChecked()) {
                     rd.set_pr_foodLOVER(true);
-                    ret.put("profile","FoodLover");
-                }
-                else
-                {
+                    ret.put("profile", "FoodLover");
+                } else {
                     rd.set_pr_foodLOVER(false);
                 }
                 break;
             case R.id.tbNightLover:
-                if (nightLifeLover.isChecked())
-                {
+                if (nightLifeLover.isChecked()) {
                     rd.set_pr_nightLOVER(true);
-                    ret.put("profile","NightLover");
-                }
-                else
-                {
+                    ret.put("profile", "NightLover");
+                } else {
                     rd.set_pr_nightLOVER(false);
                 }
                 break;
             case R.id.tbOutdoorsLover:
-                if (outdoorsLover.isChecked())
-                {
+                if (outdoorsLover.isChecked()) {
                     rd.set_pr_outdoorsLOVER(true);
-                    ret.put("profile","OutdoorsLover");
-                }
-                else
-                {
+                    ret.put("profile", "OutdoorsLover");
+                } else {
                     rd.set_pr_outdoorsLOVER(false);
                 }
                 break;
             case R.id.tbShoppingLover:
-                if (shoppingLover.isChecked())
-                {
+                if (shoppingLover.isChecked()) {
                     rd.set_pr_shoppingLOVER(true);
-                    ret.put("profile","shoppingLover");
-                }
-                else
-                {
+                    ret.put("profile", "shoppingLover");
+                } else {
                     rd.set_pr_shoppingLOVER(false);
                 }
                 break;

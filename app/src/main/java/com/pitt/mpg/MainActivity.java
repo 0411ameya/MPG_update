@@ -2,9 +2,6 @@ package com.pitt.mpg;
 
 import android.app.FragmentManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -33,7 +30,20 @@ import com.pitt.mpg.Fragments.ResultsFragment;
 
 import org.json.simple.JSONObject;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+/*
+* This main activity class is responsible for bringing all the views together (Navigation Drawer + All Fragments)
+* All the main objects are instantiated in this class and have a method that send there instance to every other calling class (Singleton like)
+* The map fragment once loaded is never removed, it is only shown and hidden whenever the menu representing the fragment is clicked
+* There are different views set for the map fragment in the options menu : Satellite, Hybrid etc in this activity
+* A default start location based on your selection of the city is placed on the map.
+* The start location is draggable and the text box inside ImportFragment gets updated immediately and dynamically based on dragged location due to the LatLng ll object
+* The singleton classes like implementation for objects is carried out by instantiating the objects in the OnCreate method , only once in app's life itme
+*
+ */
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
@@ -44,6 +54,8 @@ public class MainActivity extends AppCompatActivity
     public static android.support.v4.app.FragmentManager SFM;
     public static LatLng ll = new LatLng(37.7749, -122.4194); //37.7749, -122.4194
     public static String[][] resultArr = new String[10][5];
+    public static Marker startPosition;
+    public static HashMap<String, ArrayList<String>> hMapOUTPUT = new HashMap<String, ArrayList<String>>();
 
 
     @Override
@@ -63,7 +75,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -126,6 +137,11 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * All the respective fragments will be called based on selection from the navigation drawer
+     *
+     */
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -135,12 +151,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
 
-
         if (sMapFragment.isAdded())
             sFm.beginTransaction().hide(sMapFragment).commit();
 
         if (id == R.id.nav_input) {
-            FrameLayout fl = (FrameLayout)findViewById(R.id.content_frame);
+            FrameLayout fl = (FrameLayout) findViewById(R.id.content_frame);
             fl.removeAllViews();
             fm.beginTransaction().replace(R.id.content_frame, new ImportFragment()).commit();
             //fm.beginTransaction().addToBackStack(null);
@@ -153,27 +168,27 @@ public class MainActivity extends AppCompatActivity
                 sFm.beginTransaction().show(sMapFragment).commit();
 
         } else if (id == R.id.nav_algorithms) {
-            FrameLayout fl = (FrameLayout)findViewById(R.id.content_frame);
+            FrameLayout fl = (FrameLayout) findViewById(R.id.content_frame);
             fl.removeAllViews();
             fm.beginTransaction().replace(R.id.content_frame, new AlgorithmFragments()).commit();
 
         } else if (id == R.id.nav_profiles) {
-            FrameLayout fl = (FrameLayout)findViewById(R.id.content_frame);
+            FrameLayout fl = (FrameLayout) findViewById(R.id.content_frame);
             fl.removeAllViews();
             fm.beginTransaction().replace(R.id.content_frame, new ProfileFragment()).commit();
 
         } else if (id == R.id.nav_result) {
-            FrameLayout fl = (FrameLayout)findViewById(R.id.content_frame);
+            FrameLayout fl = (FrameLayout) findViewById(R.id.content_frame);
             fl.removeAllViews();
             fm.beginTransaction().replace(R.id.content_frame, new ResultsFragment()).commit();
 
         } else if (id == R.id.nav_compare) {
-            FrameLayout fl = (FrameLayout)findViewById(R.id.content_frame);
+            FrameLayout fl = (FrameLayout) findViewById(R.id.content_frame);
             fl.removeAllViews();
             fm.beginTransaction().replace(R.id.content_frame, new CompareFragment()).commit();
 
         } else if (id == R.id.nav_credits) {
-            FrameLayout fl = (FrameLayout)findViewById(R.id.content_frame);
+            FrameLayout fl = (FrameLayout) findViewById(R.id.content_frame);
             fl.removeAllViews();
             fm.beginTransaction().replace(R.id.content_frame, new CreditsFragment()).commit();
 
@@ -204,7 +219,7 @@ public class MainActivity extends AppCompatActivity
         googleMap.setBuildingsEnabled(true);
         //googleMap.setMyLocationEnabled(true);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.7749, -122.4194), 12.0f));
-        googleMap.addMarker(new MarkerOptions()
+        startPosition = googleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(37.7749, -122.4194))
                 .draggable(true)
                 .title("Your Location")
@@ -213,47 +228,53 @@ public class MainActivity extends AppCompatActivity
         googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker marker) {
-
             }
 
             @Override
             public void onMarkerDrag(Marker marker) {
-
             }
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
-                 ll =  marker.getPosition();
+                ll = marker.getPosition();
             }
         });
     }
 
     public static RequestDetails getRDObject() {
-      return rd;
+        return rd;
+    }
+
+    public static void resetRDObject() {
+        rd = new RequestDetails();
     }
 
     public static JSONObject getJSONObject() {
         return ret;
     }
 
-    public static android.support.v4.app.FragmentManager getSFM(){
+    public static android.support.v4.app.FragmentManager getSFM() {
         return SFM;
     }
 
-    public static SupportMapFragment getsMapFragment(){
+    public static SupportMapFragment getsMapFragment() {
         return sMapFragment;
     }
 
-    public static GoogleMap getG_MapObject(){
+    public static GoogleMap getG_MapObject() {
         return mGoogleMap;
     }
 
-    public static LatLng getMarkerPosition(){
+    public static LatLng getMarkerPosition() {
         return ll;
     }
 
-    public static String[][] getResultArray(){
+    public static String[][] getResultArray() {
         return resultArr;
+    }
+
+    public static Marker getStartPosition() {
+        return startPosition;
     }
 
 }

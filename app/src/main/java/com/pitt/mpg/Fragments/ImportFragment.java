@@ -15,7 +15,10 @@ import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.pitt.mpg.MainActivity;
 import com.pitt.mpg.R;
 import com.pitt.mpg.RequestDetails;
@@ -23,7 +26,13 @@ import com.pitt.mpg.RequestDetails;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
 
-public class ImportFragment extends Fragment implements View.OnClickListener{
+/*
+* Here the Request Details object is partly set with the items that exist in this import fragment method
+* For implementing the database functionality, I check if the object's data is already set, if not set, it will not use any text, but if set, it will use the previous value
+* On clicking the Save Details button, all the object parameters for Import Fragment are set. Before clicking the button nothing is saved
+*/
+
+public class ImportFragment extends Fragment implements View.OnClickListener {
     View view;
     RequestDetails rd;
     JSONObject ret;
@@ -47,32 +56,40 @@ public class ImportFragment extends Fragment implements View.OnClickListener{
     ToggleButton travelANDtransport;
     GoogleMap mGoogleMap;
     String groupId = "";
+
+    Marker startPosition = MainActivity.startPosition;
+
     char groups_arr[] = new char[12];
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rd = MainActivity.getRDObject();
         ret = MainActivity.getJSONObject();
         ll = MainActivity.getMarkerPosition();
-        view = inflater.inflate(R.layout.fragment_import,container,false);
+        view = inflater.inflate(R.layout.fragment_import, container, false);
         lng = (EditText) view.findViewById(R.id.etLang);
         lat = (EditText) view.findViewById(R.id.etLong);
         mGoogleMap = MainActivity.mGoogleMap;
         lat.setText(ll.latitude + "");
         lng.setText(ll.longitude + "");
         RadioGroup rg = (RadioGroup) view.findViewById(R.id.rgCity);
-        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
+        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 // checkedId is the RadioButton selected
                 if (checkedId == R.id.rbSF) {
                     rd.set_city("San Fransisco");
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.7749, -122.4194), 12.0f));
-                }
-                else {
+                } else {
                     rd.set_city("New York");
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.770039, -73.826566), 12.0f));
+                    startPosition.remove();
+                    MainActivity.startPosition = mGoogleMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(40.770039, -73.826566))
+                            .draggable(true)
+                            .title("Your Location")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                 }
             }
         });
@@ -90,11 +107,12 @@ public class ImportFragment extends Fragment implements View.OnClickListener{
         shopANDservice = (ToggleButton) view.findViewById(R.id.tbShopService);
         travelANDtransport = (ToggleButton) view.findViewById(R.id.tbTravelTransport);
 
-        if (rd.get_radius()!=null){
+        if (rd.get_radius() != null) {
             radius.setText(rd.get_radius());
             venues.setText(rd.get_venues());
         }
 
+        // To remember your choices of last query .....
         artANDentertainment.setChecked(rd.is_ip_artANDentertainment());
         clgANDuniversity.setChecked(rd.is_ip_collegeANDuniversity());
         event.setChecked(rd.is_ip_event());
@@ -130,7 +148,7 @@ public class ImportFragment extends Fragment implements View.OnClickListener{
 
         int id = view.getId();
 
-        switch(id){
+        switch (id) {
             case R.id.bSaveDetails:
                 rd.set_lat(lat.getText().toString());
                 rd.set_lng(lng.getText().toString());
@@ -147,121 +165,91 @@ public class ImportFragment extends Fragment implements View.OnClickListener{
 
                 break;
             case R.id.arts:
-                if (artANDentertainment.isChecked())
-                {
+                if (artANDentertainment.isChecked()) {
                     rd.set_ip_artANDentertainment(true);
                     groups_arr[1] = 1;
-                }
-                else
-                {
+                } else {
                     rd.set_ip_artANDentertainment(false);
                     groups_arr[1] = 0;
                 }
                 break;
             case R.id.clg:
-                if (clgANDuniversity.isChecked())
-                {
+                if (clgANDuniversity.isChecked()) {
                     rd.set_ip_collegeANDuniversity(true);
                     groups_arr[2] = 1;
-                }
-                else
-                {
+                } else {
                     rd.set_ip_collegeANDuniversity(false);
                     groups_arr[2] = 0;
                 }
                 break;
             case R.id.event:
-                if (event.isChecked())
-                {
+                if (event.isChecked()) {
                     rd.set_ip_event(true);
                     groups_arr[3] = 1;
-                }
-                else
-                {
+                } else {
                     rd.set_ip_event(false);
                     groups_arr[3] = 0;
                 }
                 break;
             case R.id.Food:
-                if (food.isChecked())
-                {
+                if (food.isChecked()) {
                     rd.set_ip_food(true);
                     groups_arr[4] = 1;
-                }
-                else
-                {
+                } else {
                     rd.set_ip_food(false);
                     groups_arr[0] = 0;
                 }
                 break;
             case R.id.tbNightLife:
-                if (nightLife.isChecked())
-                {
+                if (nightLife.isChecked()) {
                     rd.set_ip_nightlifespot(true);
                     groups_arr[5] = 1;
-                }
-                else
-                {
+                } else {
                     rd.set_ip_nightlifespot(false);
                     groups_arr[5] = 0;
                 }
                 break;
             case R.id.tbOutdoors:
-                if (outdoors.isChecked())
-                {
+                if (outdoors.isChecked()) {
                     rd.set_ip_outdoorsANDrecreation(true);
                     groups_arr[6] = 1;
-                }
-                else
-                {
+                } else {
                     rd.set_ip_outdoorsANDrecreation(false);
                     groups_arr[6] = 0;
                 }
                 break;
             case R.id.tbResidence:
-                if (residence.isChecked())
-                {
+                if (residence.isChecked()) {
                     rd.set_ip_residence(true);
                     groups_arr[8] = 1;
-                }
-                else
-                {
+                } else {
                     rd.set_ip_residence(false);
                     groups_arr[8] = 0;
                 }
                 break;
             case R.id.tbProfessional:
-                if (professionalANDothers.isChecked())
-                {
+                if (professionalANDothers.isChecked()) {
                     rd.set_ip_professionalANDothers(true);
                     groups_arr[7] = 1;
-                }
-                else
-                {
+                } else {
                     rd.set_ip_professionalANDothers(false);
-                    groups_arr[7]= 0;
+                    groups_arr[7] = 0;
                 }
                 break;
             case R.id.tbShopService:
-                if (shopANDservice.isChecked())
-                {
+                if (shopANDservice.isChecked()) {
                     rd.set_ip_shopANDservice(true);
                     groups_arr[9] = 1;
-                }
-                else
-                {
+                } else {
                     rd.set_ip_shopANDservice(false);
                     groups_arr[9] = 0;
                 }
                 break;
             case R.id.tbTravelTransport:
-                if (travelANDtransport.isChecked())
-                {
+                if (travelANDtransport.isChecked()) {
                     rd.set_ip_travelANDtransport(true);
                     groups_arr[10] = 1;
-                }
-                else
-                {
+                } else {
                     rd.set_ip_travelANDtransport(false);
                     groups_arr[10] = 0;
                 }
@@ -320,15 +308,15 @@ public class ImportFragment extends Fragment implements View.OnClickListener{
 
     }
 
-    private String generateGID (char[] groups_arr) {
+    private String generateGID(char[] groups_arr) {
         String list = "";
 
         for (int i = 1; i < 11; i++) {
-            if(groups_arr[i]==1){
+            if (groups_arr[i] == 1) {
                 if (i != 10)
-                        list += i + ",";
+                    list += i + ",";
                 else
-                        list += i;
+                    list += i;
             }
         }
         return list;

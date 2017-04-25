@@ -1,49 +1,54 @@
 package com.pitt.mpg;
+
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteCursor;
 import android.content.Context;
 import android.content.ContentValues;
 
+/*
+* This class in unsed, was created for handling the save input functionality
+ */
 
-public class MyDBHandler extends SQLiteOpenHelper{
 
-    public static  final int DATABASE_VERSION = 1;
-    public static  final String DATABASE_NAME = "requestdetails.db";
-    public static  final String TABLE_REQUEST = "request";
-    public static  final String COLUMN_ID = "_id";
-    public static  final String COLUMN_CITY = "city";
-    public static  final String COLUMN_LAT = "lat";
-    public static  final String COLUMN_LNG = "lng";
-    public static  final String COLUMN_RADIUS = "radius";
-    public static  final String COLUMN_VENUES = "venues";
-    public static  final String COLUMN_ip_artANDentertainment = "art_and_entertainment";
-    public static  final String COLUMN_ip_collegeANDuniversity = "college_and_university";
-    public static  final String COLUMN_ip_event = "event";
-    public static  final String COLUMN_ip_food = "food";
-    public static  final String COLUMN_ip_nightlifespot = "night_life_spot";
-    public static  final String COLUMN_ip_outdoorsANDrecreation = "outdoors_and_recreation";
-    public static  final String COLUMN_ip_professionalANDothers = "professional_and_others";
-    public static  final String COLUMN_ip_residence = "residence";
-    public static  final String COLUMN_ip_shopANDservice = "shop_and_service";
-    public static  final String COLUMN_ip_travelANDtransport = "travel_and_transport";
+public class MyDBHandler extends SQLiteOpenHelper {
+
+    public static final int DATABASE_VERSION = 1;
+    public static final String DATABASE_NAME = "requestdetails.db";
+    public static final String TABLE_REQUEST = "request";
+    public static final String COLUMN_ID = "_id";
+    public static final String COLUMN_CITY = "city";
+    public static final String COLUMN_LAT = "lat";
+    public static final String COLUMN_LNG = "lng";
+    public static final String COLUMN_RADIUS = "radius";
+    public static final String COLUMN_VENUES = "venues";
+    public static final String COLUMN_ip_artANDentertainment = "art_and_entertainment";
+    public static final String COLUMN_ip_collegeANDuniversity = "college_and_university";
+    public static final String COLUMN_ip_event = "event";
+    public static final String COLUMN_ip_food = "food";
+    public static final String COLUMN_ip_nightlifespot = "night_life_spot";
+    public static final String COLUMN_ip_outdoorsANDrecreation = "outdoors_and_recreation";
+    public static final String COLUMN_ip_professionalANDothers = "professional_and_others";
+    public static final String COLUMN_ip_residence = "residence";
+    public static final String COLUMN_ip_shopANDservice = "shop_and_service";
+    public static final String COLUMN_ip_travelANDtransport = "travel_and_transport";
     //profiles tab
-    public static  final String COLUMN_pr_artLOVER = "art_lover";
-    public static  final String COLUMN_pr_nightLOVER = "night_lover";
-    public static  final String COLUMN_pr_outdoorsLOVER = "outdoors_lover";
-    public static  final String COLUMN_pr_foodLOVER = "food_lover";
-    public static  final String COLUMN_pr_shoppingLOVER = "shopping_lover";
+    public static final String COLUMN_pr_artLOVER = "art_lover";
+    public static final String COLUMN_pr_nightLOVER = "night_lover";
+    public static final String COLUMN_pr_outdoorsLOVER = "outdoors_lover";
+    public static final String COLUMN_pr_foodLOVER = "food_lover";
+    public static final String COLUMN_pr_shoppingLOVER = "shopping_lover";
     //algorithms tab
-    public static  final String COLUMN_al_PDcomposite = "pd_composite";
-    public static  final String COLUMN_al_PDdistpref = "pd_dist_pref";
-    public static  final String COLUMN_al_pagerank = "page_rank";
-    public static  final String COLUMN_al_PDpopdist = "pd_pop_dist";
-    public static  final String COLUMN_al_PDpref = "pd_pref";
-    public static  final String COLUMN_al_PDcompositepagerank = "pd_composite_page_rank";
-    public static  final String COLUMN_al_PDprefdistpagerank = "pd_pref_dist_page_rank";
-    public static  final String COLUMN_al_KMedoids = "k_medoids";
-    public static  final String COLUMN_al_DisC = "disc";
-    public static  final String COLUMN_al_RandomSelection = "random_selection";
+    public static final String COLUMN_al_PDcomposite = "pd_composite";
+    public static final String COLUMN_al_PDdistpref = "pd_dist_pref";
+    public static final String COLUMN_al_pagerank = "page_rank";
+    public static final String COLUMN_al_PDpopdist = "pd_pop_dist";
+    public static final String COLUMN_al_PDpref = "pd_pref";
+    public static final String COLUMN_al_PDcompositepagerank = "pd_composite_page_rank";
+    public static final String COLUMN_al_PDprefdistpagerank = "pd_pref_dist_page_rank";
+    public static final String COLUMN_al_KMedoids = "k_medoids";
+    public static final String COLUMN_al_DisC = "disc";
+    public static final String COLUMN_al_RandomSelection = "random_selection";
 
     public MyDBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);

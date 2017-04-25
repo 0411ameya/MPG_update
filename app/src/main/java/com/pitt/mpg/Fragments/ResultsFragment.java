@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -24,7 +25,11 @@ import com.pitt.mpg.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
+/*
+* This fragment is used to show and hide specific results on the map after they have been plotted
+* This feature is implemented because based on the query details the user gave, different algorithms can give same results
+* Having a feature to turn the results visible and invisible helps a lot
+*/
 public class ResultsFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback {
     View view;
     ToggleButton pdComposite;
@@ -55,47 +60,55 @@ public class ResultsFragment extends Fragment implements View.OnClickListener, O
     public static OutputDetails od;
 
     public static ArrayList<String> al_OD = new ArrayList<String>();
-    public HashMap<String, ArrayList<String>> hMap_OD = new HashMap<String, ArrayList<String>>();
+    public HashMap<String, ArrayList<String>> hMap_OD;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) throws NullPointerException {
         view = inflater.inflate(R.layout.fragment_results, container, false);
 
+
         od = AlgorithmFragments.getOD();
-        hMap_OD = od.getOut();
 
-        for (String key : hMap_OD.keySet()) {
-            Log.d("HASHMAP in RESULTSFRAG", key + " :: " + hMap_OD.get(key));
+        if (od == null)
+            Toast.makeText(getActivity(), "There is no query input made to show any results", Toast.LENGTH_LONG).show();
+        else {
+            hMap_OD = od.getOut();
+
+            for (String key : hMap_OD.keySet())
+                Log.d("HASHMAP in RESULTSFRAG", key + " :: " + hMap_OD.get(key));
+
+
+            sMapFragment = MainActivity.getsMapFragment();
+
+            pdComposite = (ToggleButton) view.findViewById(R.id.tbPDComposite1);
+            pdDistPref = (ToggleButton) view.findViewById(R.id.tbPDDistPref1);
+            pagerank = (ToggleButton) view.findViewById(R.id.tbPageRank1);
+            pdPopDist = (ToggleButton) view.findViewById(R.id.tbPopDist1);
+            pdPref = (ToggleButton) view.findViewById(R.id.tbPref1);
+            pdCompositePagerank = (ToggleButton) view.findViewById(R.id.tbPDCompositePageRank1);
+            pdDistPrefPageRank = (ToggleButton) view.findViewById(R.id.tbPDDistPrefPageRank1);
+            kMedoids = (ToggleButton) view.findViewById(R.id.tbK_Medoids1);
+            disC = (ToggleButton) view.findViewById(R.id.tbDisC1);
+            randomSelection = (ToggleButton) view.findViewById(R.id.tbRandomSelection1);
+            mG.clear();
+            initializeVISIBILITY();
+
+            pdComposite.setEnabled(MainActivity.rd.is_al_PDcomposite());
+            pdComposite.setChecked(MainActivity.rd.is_al_PDcomposite());
+
+            sMapFragment.getMapAsync(this);
+            pdComposite.setOnClickListener(this);
+            pdDistPref.setOnClickListener(this);
+            pagerank.setOnClickListener(this);
+            pdPopDist.setOnClickListener(this);
+            pdPref.setOnClickListener(this);
+            pdCompositePagerank.setOnClickListener(this);
+            pdDistPrefPageRank.setOnClickListener(this);
+            kMedoids.setOnClickListener(this);
+            disC.setOnClickListener(this);
+            randomSelection.setOnClickListener(this);
         }
-
-        sMapFragment = MainActivity.getsMapFragment();
-        pdComposite = (ToggleButton) view.findViewById(R.id.tbPDComposite1);
-        pdDistPref = (ToggleButton) view.findViewById(R.id.tbPDDistPref1);
-        pagerank = (ToggleButton) view.findViewById(R.id.tbPageRank1);
-        pdPopDist = (ToggleButton) view.findViewById(R.id.tbPopDist1);
-        pdPref = (ToggleButton) view.findViewById(R.id.tbPref1);
-        pdCompositePagerank = (ToggleButton) view.findViewById(R.id.tbPDCompositePageRank1);
-        pdDistPrefPageRank = (ToggleButton) view.findViewById(R.id.tbPDDistPrefPageRank1);
-        kMedoids = (ToggleButton) view.findViewById(R.id.tbK_Medoids1);
-        disC = (ToggleButton) view.findViewById(R.id.tbDisC1);
-        randomSelection = (ToggleButton) view.findViewById(R.id.tbRandomSelection1);
-
-
-
-        initializeVISIBILITY();
-        sMapFragment.getMapAsync(this);
-        pdComposite.setOnClickListener(this);
-        pdDistPref.setOnClickListener(this);
-        pagerank.setOnClickListener(this);
-        pdPopDist.setOnClickListener(this);
-        pdPref.setOnClickListener(this);
-        pdCompositePagerank.setOnClickListener(this);
-        pdDistPrefPageRank.setOnClickListener(this);
-        kMedoids.setOnClickListener(this);
-        disC.setOnClickListener(this);
-        randomSelection.setOnClickListener(this);
-
         return view;
     }
 

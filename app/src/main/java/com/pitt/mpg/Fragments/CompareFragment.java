@@ -11,7 +11,11 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.pitt.mpg.MainActivity;
+import com.pitt.mpg.OutputDetails;
 import com.pitt.mpg.R;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CompareFragment extends Fragment implements View.OnClickListener{
 
@@ -67,6 +71,9 @@ public class CompareFragment extends Fragment implements View.OnClickListener{
 
     String[][] resultArray = MainActivity.getResultArray();
     Button clearALL;
+
+    public static OutputDetails od;
+
 
 
     GoogleMap mG = MainActivity.mGoogleMap;
@@ -198,5 +205,8 @@ public class CompareFragment extends Fragment implements View.OnClickListener{
             }
         }
         setAllTextsToTextViews();
+        od = AlgorithmFragments.getOD();
+        od.setOut(new HashMap<String, ArrayList<String>>());
+        MainActivity.resetRDObject();
     }
 }
