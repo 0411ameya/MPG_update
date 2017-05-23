@@ -33,6 +33,8 @@ import org.json.simple.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import layout.WelcomeFragment;
+
 /*
 * This main activity class is responsible for bringing all the views together (Navigation Drawer + All Fragments)
 * All the main objects are instantiated in this class and have a method that send there instance to every other calling class (Singleton like)
@@ -52,11 +54,12 @@ public class MainActivity extends AppCompatActivity
     public static GoogleMap mGoogleMap;
     public static RequestDetails rd;
     public static android.support.v4.app.FragmentManager SFM;
-    public static LatLng ll = new LatLng(37.7749, -122.4194); //37.7749, -122.4194
+
+    public static LatLng ll;  //37.7749, -122.4194
     public static String[][] resultArr = new String[10][5];
     public static Marker startPosition;
     public static HashMap<String, ArrayList<String>> hMapOUTPUT = new HashMap<String, ArrayList<String>>();
-
+    public  static String welcomeCity = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,11 @@ public class MainActivity extends AppCompatActivity
             for (int j = 0; j < 5; j++) {
                 resultArr[i][j] = "-";
             }
+        }
+        if (MainActivity.welcomeCity.equals("NY")){
+            ll = new LatLng(40.770039, -73.826566);
+        }else {
+            ll = new LatLng(37.7749, -122.4194);
         }
 
         setContentView(R.layout.activity_main);
@@ -85,14 +93,14 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        //FragmentManager fm = getFragmentManager();
-        //fm.beginTransaction().replace(R.id.content_frame, new ImportFragment()).commit();
-
         sMapFragment.getMapAsync(this);
+        FragmentManager fm = getFragmentManager();
+        fm.beginTransaction().replace(R.id.content_frame, new WelcomeFragment()).commit();
 
+        /*sMapFragment.getMapAsync(this);
         android.support.v4.app.FragmentManager sFm = getSupportFragmentManager();
-        sFm.beginTransaction().add(R.id.map, sMapFragment).commit();
+        sFm.beginTransaction().add(R.id.map, sMapFragment).commit();*/
+
     }
 
     @Override
@@ -217,13 +225,29 @@ public class MainActivity extends AppCompatActivity
 //        mGoogleMap.setMyLocationEnabled(true);
 
         googleMap.setBuildingsEnabled(true);
+
         //googleMap.setMyLocationEnabled(true);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.7749, -122.4194), 12.0f));
-        startPosition = googleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(37.7749, -122.4194))
-                .draggable(true)
-                .title("Your Location")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        if (MainActivity.welcomeCity.equals("NY")){
+            ll = new LatLng(40.770039, -73.826566);
+        }else {
+            ll = new LatLng(37.7749, -122.4194);
+        }
+        if (welcomeCity.equals("SF")){
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.7749, -122.4194), 12.0f));
+            startPosition = googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(37.7749, -122.4194))
+                    .draggable(true)
+                    .title("Your Location")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        }else {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.770039, -73.826566), 12.0f));
+            startPosition = googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(40.770039, -73.826566))
+                    .draggable(true)
+                    .title("Your Location")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        }
+
 
         googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override

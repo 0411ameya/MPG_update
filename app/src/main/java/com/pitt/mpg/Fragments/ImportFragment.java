@@ -67,6 +67,11 @@ public class ImportFragment extends Fragment implements View.OnClickListener {
         rd = MainActivity.getRDObject();
         ret = MainActivity.getJSONObject();
         ll = MainActivity.getMarkerPosition();
+        if (MainActivity.welcomeCity.equals("NY")){
+            ll = new LatLng(40.770039, -73.826566);
+        }else {
+            ll = new LatLng(37.7749, -122.4194);
+        }
         view = inflater.inflate(R.layout.fragment_import, container, false);
         lng = (EditText) view.findViewById(R.id.etLang);
         lat = (EditText) view.findViewById(R.id.etLong);
@@ -74,14 +79,34 @@ public class ImportFragment extends Fragment implements View.OnClickListener {
         lat.setText(ll.latitude + "");
         lng.setText(ll.longitude + "");
         RadioGroup rg = (RadioGroup) view.findViewById(R.id.rgCity);
+        if (MainActivity.welcomeCity.equals("NY")) {
+            rg.check(R.id.rbNY);
+            rd.set_city("New York");
+        }
+        else {
+            rg.check(R.id.rbSF);
+            rd.set_city("San Fransisco");
+        }
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 // checkedId is the RadioButton selected
                 if (checkedId == R.id.rbSF) {
+                    ll = new LatLng(37.7749, -122.4194);
+                    lat.setText(ll.latitude + "");
+                    lng.setText(ll.longitude + "");
                     rd.set_city("San Fransisco");
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.7749, -122.4194), 12.0f));
+                    startPosition.remove();
+                    MainActivity.startPosition = mGoogleMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(37.7749, -122.4194))
+                            .draggable(true)
+                            .title("Your Location")
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                 } else {
+                    ll = new LatLng(40.770039, -73.826566);
+                    lat.setText(ll.latitude + "");
+                    lng.setText(ll.longitude + "");
                     rd.set_city("New York");
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.770039, -73.826566), 12.0f));
                     startPosition.remove();
