@@ -37,6 +37,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.NoRouteToHostException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -144,7 +145,7 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
         disC.setOnClickListener(this);
         randomSelection.setOnClickListener(this);
 
-        Toast.makeText(getActivity(), "Inside Algorithms!", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), "Inside Algorithms!", Toast.LENGTH_SHORT).show();
 
         runAlgos.setOnClickListener(this);
         selectAll.setOnClickListener(this);
@@ -156,14 +157,22 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
                     .permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
+        Toast.makeText(getActivity(), "Checking if the Server is Online...", Toast.LENGTH_SHORT).show();
 
         try {
             client = new Socket(serverName, port);
             outToServer = client.getOutputStream();
             out = new DataOutputStream(outToServer);
-        } catch (IOException e) {
+            Toast.makeText(getActivity(), "Server is Active... Select your algorithms to run!", Toast.LENGTH_SHORT).show();
+
+        } catch (NoRouteToHostException e){
+            Toast.makeText(getActivity(), "We are sorry, the server is currently offline. Please try after some time!", Toast.LENGTH_SHORT).show();
+        }
+        catch (IOException e) {
+            Toast.makeText(getActivity(), "We are sorry, the server is currently offline. Please try after some time!", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
+
 
         return view;
     }
@@ -227,7 +236,7 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
                     JSONObject json = (JSONObject) parser.parse(received);
                     JSONArray jArr = (JSONArray) json.get("Results");
                     Log.d("JSON ARR STRING : ", "Received : " + jArr.toString());
-                    Toast.makeText(getActivity(), "Received : " + jArr.toString(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(), "Received : " + jArr.toString(), Toast.LENGTH_SHORT).show();
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < jArr.size(); i++) {
                         JSONObject jsonobject = (JSONObject) jArr.get(i);
@@ -429,6 +438,12 @@ public class AlgorithmFragments extends Fragment implements View.OnClickListener
      * @param runTime
      */
     private void setResultsArray(String modelName, String diversity, String relevency, String radius, String runTime) {
+        if (diversity.length() > 6)
+            diversity = diversity.substring(0,6);
+        if (relevency.length() > 6)
+            relevency = relevency.substring(0,6);
+        if (radius.length() > 6)
+            radius = radius.substring(0,6);
         switch (modelName) {
             case "PageRank":
                 resultArr[2][1] = diversity;
